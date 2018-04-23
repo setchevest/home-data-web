@@ -5,6 +5,7 @@ import { UserService } from '../../../@core/data/users.service';
 import { AnalyticsService } from '../../../@core/utils/analytics.service';
 import { takeWhile } from 'rxjs/operators/takeWhile';
 import { fromEvent as observableFromEvent } from 'rxjs/observable/fromEvent';
+import { AbService } from '../../../@core/utils/ab.service';
 
 @Component({
   selector: 'ngx-header',
@@ -16,6 +17,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Input() position = 'normal';
 
   user: any;
+  hireTextVariant: string;
   userMenu = [{ title: 'Profile' }, { title: 'Log out' }];
 
   private alive = true;
@@ -24,7 +26,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
               private menuService: NbMenuService,
               private userService: UserService,
               private analytics: AnalyticsService,
-              private analyticsService: AnalyticsService) {
+              private abService: AbService) {
 
     observableFromEvent(document, 'mouseup')
       .pipe(takeWhile(() => this.alive))
@@ -45,6 +47,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.userService.getUsers()
       .subscribe((users: any) => this.user = users.nick);
+
+    this.listenForVariants();
   }
 
   toggleSidebar(): boolean {
@@ -62,7 +66,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   startSearch() {
-    this.analyticsService.trackEvent('startSearch');
+    this.analytics.trackEvent('startSearch');
   }
 
   trackEmailClick() {
@@ -71,5 +75,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.alive = false;
+  }
+
+  listenForVariants() {
+    const variants = [
+      AbService.VARIANT_DEVELOPERS_HIRE,
+      AbService.VARIANT_HIGHLIGHT_HIRE,
+      AbService.VARIANT_SOLUTION_HIRE,
+    ];
+
+    this.abService.onAbEvent()
+      .subscribe((e: { name: string }) => {
+        if (variants.includes(e.name)) {
+          this.hireTextVariant = e.name;
+        }
+      });
   }
 }

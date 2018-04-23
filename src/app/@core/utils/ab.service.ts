@@ -1,25 +1,41 @@
 import { Injectable } from '@angular/core';
 
-import { NbThemeService } from '@nebular/theme';
 import { fromEvent as observableFromEvent } from 'rxjs/observable/fromEvent';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable } from 'rxjs/Observable';
+import { filter } from 'rxjs/operators/filter';
 
 @Injectable()
 export class AbService {
 
-  private static readonly THEME_CHANGE = 'variant-load'; // TODO: rename next time
-  private static readonly THEME_CHANGE_ENABLED = false;
+  static readonly VARIANT_THEME_CHANGE = 'theme-change';
+  static readonly VARIANT_HIGHLIGHT_HIRE = 'highlight-hire';
+  static readonly VARIANT_DEVELOPERS_HIRE = 'developers-hire';
+  static readonly VARIANT_SOLUTION_HIRE = 'solution-hire';
+  // static readonly VARIANT_BANNER_HIRE = 'banner-hire';
 
-  constructor(private themeService: NbThemeService) {
+  private static readonly EVENT_NAME = 'ab-variant';
+  private static readonly AB_ENABLED = true;
 
-    if (AbService.THEME_CHANGE_ENABLED) {
-      this.abThemeChange();
+  private events$ = new BehaviorSubject<{ name: string }>(null);
+
+  constructor() {
+
+    if (AbService.AB_ENABLED) {
+      observableFromEvent(document, AbService.EVENT_NAME)
+        .subscribe((e: { detail: any }) => {
+          if (e && e.detail) {
+            this.events$.next(e.detail);
+          }
+        })
     }
   }
 
-  abThemeChange() {
-    observableFromEvent(document, AbService.THEME_CHANGE)
-      .subscribe(() => {
-        this.themeService.changeTheme('default');
-      });
+  onAbEvent(name: string = ''): Observable<{ name: string }> {
+    return this.events$.asObservable()
+      .pipe(
+        filter(e => !!(e && e.name)),
+        filter(e => name ? e.name === name : true),
+      );
   }
 }

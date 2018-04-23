@@ -84,16 +84,20 @@
     }
   }
 
-  @include media-breakpoint-down(lg) {
+  @include media-breakpoint-down(xl) {
 
     .control-item.email, .control-item.notifications {
       display: none;
     }
+  }
 
+  @include media-breakpoint-down(lg) {
+    .control-item.search {
+      display: none;
+    }
   }
 
   @include media-breakpoint-down(md) {
-
 
     nb-action:not(.toggle-layout) {
       border: none;
