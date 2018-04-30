@@ -1,6 +1,7 @@
 import {
   Component, HostListener, ViewChild, ElementRef, Input, Output, EventEmitter, AfterViewInit, OnChanges,
 } from '@angular/core';
+import { min } from 'rxjs/operators';
 
 const VIEW_BOX_SIZE = 300;
 
@@ -21,17 +22,22 @@ export class TemperatureDraggerComponent implements AfterViewInit, OnChanges {
   @Input() thumbBorder = 3;
   @Input() maxLeap = 0.4;
 
-  value = 50;
+  @Input() min = 0; // min output value
+  @Input() max = 100; // max output value
+  @Input() step = 0.1;
+
+  value = this.min;
   @Output('valueChange') valueChange = new EventEmitter<Number>();
   @Input('value') set setValue(value) {
     this.value = value;
   }
 
-  @Input() min = 0; // min output value
-  @Input() max = 100; // max output value
-  @Input() step = 0.1;
-
-  @Output() power = new EventEmitter<boolean>();
+  isOn = true;
+  @Output("isOnChange") isOnChange = new EventEmitter<boolean>();
+  @Input("isOn") set setIsOn(value) {
+    this.isOn = value;
+    this.invalidatePinPosition();
+  }
 
   @HostListener('window:mouseup', ['$event'])
   onMouseUp(event) {
@@ -49,7 +55,6 @@ export class TemperatureDraggerComponent implements AfterViewInit, OnChanges {
     this.invalidate();
   }
 
-  off = false;
   oldValue: number;
 
   svgControlId = new Date().getTime();
@@ -95,22 +100,22 @@ export class TemperatureDraggerComponent implements AfterViewInit, OnChanges {
 
   mouseDown(event) {
     this.isMouseDown = true;
-    if (!this.off) {
+    if (this.isOn) {
       this.recalculateValue(event, true);
     }
   }
 
   switchPower() {
-    this.off = !this.off;
-    this.power.emit(!this.off);
+    this.isOn = !this.isOn;
+    this.isOnChange.emit(this.isOn);
 
-    if (this.off) {
+    if (!this.isOn) {
       this.oldValue = this.value;
       this.value = this.min;
-    } else {
+    }
+    else {
       this.value = this.oldValue;
     }
-
     this.invalidatePinPosition();
   }
 
@@ -308,7 +313,7 @@ export class TemperatureDraggerComponent implements AfterViewInit, OnChanges {
   }
 
   private recalculateValue(event, allowJumping = false) {
-    if (this.isMouseDown && !this.off) {
+    if (this.isMouseDown && this.isOn) {
       const rect = this.svgRoot.nativeElement.getBoundingClientRect();
       const center = {
         x: rect.left + VIEW_BOX_SIZE * this.scaleFactor / 2,
