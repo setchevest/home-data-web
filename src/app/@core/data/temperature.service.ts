@@ -17,7 +17,7 @@ export class TemperatureService {
     return this.httpClient.get(this.getCurrentStatusUrl);
   }
 
-  setHeaterParams(data: any = { mode: "manual", isOn: true, temperature: 22 }) : Observable<any> {
-    return this.httpClient.post(this.setHeaterModeUrl,data);
+  setHeaterParams(data: any = { mode: 'manual', isOn: true, temperature: 22 }): Observable<any> {
+    return this.httpClient.post(this.setHeaterModeUrl, data);
   }
 }

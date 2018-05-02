@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, Input } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { TemperatureService } from '../../../@core/data/temperature.service';
 
@@ -30,7 +30,7 @@ export class TemperatureComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    var self = this;
+    const self = this;
 
     this.temperatureService.getCurrentTemperature().subscribe((data) => {
       if (!data.error) {
@@ -42,8 +42,9 @@ export class TemperatureComponent implements OnInit, OnDestroy {
   }
 
   onPowerChanged(event: boolean): boolean {
-    var self = this;
-    this.temperatureService.setHeaterParams({ mode: "manual", isOn: event, temperature: this.temperature }).subscribe((data) => {
+    const self = this;
+    this.temperatureService.setHeaterParams({ mode: 'manual', isOn: event, temperature: this.temperature })
+      .subscribe((data) => {
       if (!data.error) {
         self.temperatureOff = !<boolean>data.data.isOn;
         self.temperature = data.data.temperature;
