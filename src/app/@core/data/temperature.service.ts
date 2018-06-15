@@ -8,18 +8,35 @@ import { AppConfigService } from './appconfig.service';
 export class TemperatureService {
 
   constructor(private httpClient: HttpClient, appConfigService: AppConfigService) {
-    this.setHeaterModeUrl = appConfigService.SERVER_API_URL + "heaterstatus/setHeaterMode";
-    this.getCurrentStatusUrl = appConfigService.SERVER_API_URL + "heaterstatus/getCurrentStatus";
+    this.turnOnUrl = appConfigService.SERVER_API_URL + 'thermostat/turnon';
+    this.turnOffUrl = appConfigService.SERVER_API_URL + 'thermostat/turnoff';
+    this.getStatusUrl = appConfigService.SERVER_API_URL + 'thermostat';
+    this.setAutoModeUrl = appConfigService.SERVER_API_URL + 'thermostat/setautomode';
+    this.setManualModeUrl = appConfigService.SERVER_API_URL + 'thermostat/setmanualmode';
   }
 
-  private readonly setHeaterModeUrl: string = 'http://localhost:8080/api/heaterstatus/setHeaterMode';
-  private readonly getCurrentStatusUrl: string = 'http://localhost:8080/api/heaterstatus/getCurrentStatus';
+  private readonly turnOnUrl: string;
+  private readonly turnOffUrl: string;
+  private readonly getStatusUrl: string;
+  private readonly setAutoModeUrl: string;
+  private readonly setManualModeUrl: string;
 
-  getCurrentTemperature(): Observable<any> {
-    return this.httpClient.get(this.getCurrentStatusUrl);
+  public getCurrentTemperature(): Observable<any> {
+    return this.httpClient.get(this.getStatusUrl);
   }
 
-  setHeaterParams(data: any = { mode: 'manual', isOn: true, temperature: 22 }): Observable<any> {
-    return this.httpClient.post(this.setHeaterModeUrl, data);
+  public setHeaterParams(data: any): Observable<any> {
+    if (data.isOn) {
+      return this.turnOffHeater();
+    }
+    return this.turnOnHeater();
+  }
+
+  public turnOnHeater(): Observable<any> {
+    return this.httpClient.post(this.turnOnUrl, null);
+  }
+
+  public turnOffHeater(): Observable<any> {
+    return this.httpClient.post(this.turnOffUrl, null);
   }
 }

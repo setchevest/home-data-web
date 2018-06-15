@@ -6,7 +6,7 @@ import { StateService } from './state.service';
 import { SmartTableService } from './smart-table.service';
 import { PlayerService } from './player.service';
 import { TemperatureService } from './temperature.service';
-import { AppConfigService } from "./appconfig.service";
+import { AppConfigService } from './appconfig.service';
 
 const SERVICES = [
   AppConfigService,
