@@ -22,6 +22,6 @@ export class AppConfigService {
     private setEnv() {
         // Add NODE_ENV to path if is not production
         // if (process.env.NODE_ENV !== 'production') this.envFile += '.' + process.env.NODE_ENV;
-        // Set env from file        
+        // Set env from file
     }
 }

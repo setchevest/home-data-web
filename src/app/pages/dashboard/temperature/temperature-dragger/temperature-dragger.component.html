@@ -37,6 +37,6 @@
   <ng-content></ng-content>
 </div>
 
-<div class="power-bg" [ngClass]="{'off': off}" (click)="switchPower()">
+<div class="power-bg" [ngClass]="{'off': !isOn}" (click)="switchPower()">
   <i class="nb-power-circled"></i>
 </div>

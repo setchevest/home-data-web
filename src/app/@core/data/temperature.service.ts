@@ -10,7 +10,7 @@ export class TemperatureService {
   constructor(private httpClient: HttpClient, appConfigService: AppConfigService) {
     this.turnOnUrl = appConfigService.SERVER_API_URL + 'thermostat/turnon';
     this.turnOffUrl = appConfigService.SERVER_API_URL + 'thermostat/turnoff';
-    this.getStatusUrl = appConfigService.SERVER_API_URL + 'thermostat';
+    this.getStatusUrl = appConfigService.SERVER_API_URL + 'thermostat/status';
     this.setAutoModeUrl = appConfigService.SERVER_API_URL + 'thermostat/setautomode';
     this.setManualModeUrl = appConfigService.SERVER_API_URL + 'thermostat/setmanualmode';
   }
@@ -21,7 +21,7 @@ export class TemperatureService {
   private readonly setAutoModeUrl: string;
   private readonly setManualModeUrl: string;
 
-  public getCurrentTemperature(): Observable<any> {
+  public getCurrentStatus(): Observable<any> {
     return this.httpClient.get(this.getStatusUrl);
   }
 

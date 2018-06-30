@@ -32,10 +32,12 @@ export class TemperatureComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const self = this;
 
-    this.temperatureService.getCurrentTemperature().subscribe((data) => {
+    this.temperatureService.getCurrentStatus().subscribe((data) => {
       if (!data.error) {
-        self.temperatureOff = !<boolean>data.data.isOn;
-        self.temperature = data.data.temperature;
+        
+        self.temperatureOff = !<boolean>data.isOn;
+        self.temperature = data.temperature;
+        self.humidity = data.humidity;
       }
     });
 
@@ -43,11 +45,13 @@ export class TemperatureComponent implements OnInit, OnDestroy {
 
   onPowerChanged(event: boolean): boolean {
     const self = this;
-    this.temperatureService.setHeaterParams({ mode: 'manual', isOn: event, temperature: this.temperature })
+    this.temperatureService.setHeaterParams({ mode: 'manual', isOn: !event, temperature: this.temperature })
       .subscribe((data) => {
       if (!data.error) {
-        self.temperatureOff = !<boolean>data.data.isOn;
-        self.temperature = data.data.temperature;
+        
+        self.temperatureOff = !<boolean>data.isOn;
+        self.temperature = data.temperature;
+        self.humidity = data.humidity;
       }
     })
     return true;
